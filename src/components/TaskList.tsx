@@ -89,22 +89,15 @@ export function TaskList({
       return;
     }
 
-    // Extract task ID from draggableId (format: "task-{id}")
-    const sourceId = parseInt(result.draggableId.replace('task-', ''), 10);
-    const destId = parseInt(
-      tasks[result.destination.index]?.id.toString().replace('task-', '') || '0',
-      10
-    );
-
-    // Find the actual indices in the filtered array
-    const sourceIndex = tasks.findIndex((t) => t.id === sourceId);
-    const destIndex = tasks.findIndex((t) => t.id === destId);
-
-    if (sourceIndex === -1 || destIndex === -1) {
+    // Validate that the dragged item still exists in the current tasks array
+    const sourceTask = tasks.find((t) => t.id.toString() === result.draggableId);
+    if (!sourceTask) {
+      console.warn('Dragged task no longer exists in filtered list');
       return;
     }
 
-    onReorder(sourceIndex, destIndex);
+    // Use the indices directly from the filtered array
+    onReorder(result.source.index, result.destination.index);
   };
 
   if (loading) {
@@ -150,12 +143,9 @@ export function TaskList({
     );
   }
 
-  // Create a stable key for the DragDropContext based on task IDs
-  const tasksKey = tasks.map(t => t.id).join(',');
-
   return (
-    <DragDropContext key={tasksKey} onDragEnd={handleDragEnd}>
-      <Droppable droppableId="tasks">
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Droppable droppableId="tasks" type="TASK">
         {(provided, snapshot) => (
           <div
             {...provided.droppableProps}
@@ -163,7 +153,7 @@ export function TaskList({
             className={`space-y-2 ${snapshot.isDraggingOver ? 'bg-blue-50 dark:bg-blue-900/10 rounded-lg p-2' : ''}`}
           >
             {tasks.map((task, index) => (
-              <Draggable key={`task-${task.id}`} draggableId={`task-${task.id}`} index={index}>
+              <Draggable key={task.id} draggableId={task.id.toString()} index={index} isDragDisabled={editingId === task.id || categoryEditingId === task.id}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
