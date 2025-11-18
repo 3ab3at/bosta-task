@@ -56,12 +56,18 @@ function App() {
   }, []);
 
   // Sync category map when tasks change (in case new tasks are added)
-  // Only merge new tasks, don't overwrite existing category assignments
+  // Only add categories for new tasks, don't overwrite existing assignments
   useEffect(() => {
     const storedCategories = getTaskCategories();
     setTaskCategoryMap((prev) => {
-      // Merge with existing state, preserving current assignments
-      return { ...prev, ...storedCategories };
+      // Only add categories for tasks that don't have one yet
+      const updated = { ...prev };
+      tasks.forEach((task) => {
+        if (storedCategories[task.id] && !updated[task.id]) {
+          updated[task.id] = storedCategories[task.id];
+        }
+      });
+      return updated;
     });
   }, [tasks]);
 
