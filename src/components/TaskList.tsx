@@ -162,9 +162,8 @@ export function TaskList({
                   >
                     <div
                       {...provided.dragHandleProps}
-                      className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0 touch-none"
+                      className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0 select-none"
                       aria-label="Drag to reorder"
-                      onMouseDown={(e) => e.stopPropagation()}
                     >
                       <svg
                         className="w-5 h-5"
@@ -184,6 +183,8 @@ export function TaskList({
                       type="checkbox"
                       checked={task.completed}
                       onChange={(e) => onToggle(task.id, e.target.checked)}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
                       aria-label={`Mark task "${task.todo}" as ${task.completed ? 'incomplete' : 'complete'}`}
                       className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
                     />
@@ -220,7 +221,11 @@ export function TaskList({
                       <>
                         <div className="flex-1 flex flex-col gap-2">
                           <button
-                            onClick={() => startEdit(task)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              startEdit(task);
+                            }}
+                            onMouseDown={(e) => e.stopPropagation()}
                             className={`text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded px-1 -ml-1 ${
                               task.completed
                                 ? 'line-through text-gray-500 dark:text-gray-400'
@@ -243,7 +248,11 @@ export function TaskList({
                             <div className="flex items-center gap-2 flex-wrap">
                               {taskCategoryMap[task.id] ? (
                                 <button
-                                  onClick={() => setCategoryEditingId(task.id)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCategoryEditingId(task.id);
+                                  }}
+                                  onMouseDown={(e) => e.stopPropagation()}
                                   className="px-2 py-1 rounded-full text-xs font-medium transition-all hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2"
                                   style={{
                                     backgroundColor: `${categories.find((c) => c.id === taskCategoryMap[task.id])?.color}40`,
@@ -255,22 +264,32 @@ export function TaskList({
                                 </button>
                               ) : (
                                 <button
-                                  onClick={() => setCategoryEditingId(task.id)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCategoryEditingId(task.id);
+                                  }}
+                                  onMouseDown={(e) => e.stopPropagation()}
                                   aria-label="Add category"
                                   className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                                 >
                                   + Add category
                                 </button>
                               )}
-                              <DatePicker
-                                value={taskDueDateMap[task.id]}
-                                onChange={(dueDate) => onDueDateChange(task.id, dueDate)}
-                              />
+                              <div onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
+                                <DatePicker
+                                  value={taskDueDateMap[task.id]}
+                                  onChange={(dueDate) => onDueDateChange(task.id, dueDate)}
+                                />
+                              </div>
                             </div>
                           )}
                         </div>
                         <button
-                          onClick={() => onDelete(task.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(task.id);
+                          }}
+                          onMouseDown={(e) => e.stopPropagation()}
                           className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-sm transition-opacity focus:opacity-100"
                           aria-label={`Delete task: ${task.todo}`}
                         >
