@@ -38,6 +38,16 @@ export function TaskList({
   const [editValue, setEditValue] = useState('');
   const [categoryEditingId, setCategoryEditingId] = useState<number | null>(null);
 
+  const startEdit = (task: Task) => {
+    setEditingId(task.id);
+    setEditValue(task.todo);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditValue('');
+  };
+
   // Handle escape key to cancel editing or category selection
   useEffect(() => {
     if (!editingId && !categoryEditingId) return;
@@ -55,16 +65,6 @@ export function TaskList({
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [editingId, categoryEditingId]);
-
-  const startEdit = (task: Task) => {
-    setEditingId(task.id);
-    setEditValue(task.todo);
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditValue('');
-  };
 
   const saveEdit = async (id: number) => {
     if (!editValue.trim()) {
