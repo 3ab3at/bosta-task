@@ -156,7 +156,8 @@ export function TaskList({
                       type="checkbox"
                       checked={task.completed}
                       onChange={(e) => onToggle(task.id, e.target.checked)}
-                      className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 cursor-pointer"
+                      aria-label={`Mark task "${task.todo}" as ${task.completed ? 'incomplete' : 'complete'}`}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
                     />
                     {editingId === task.id ? (
                       <div className="flex-1 flex gap-2">
@@ -169,17 +170,20 @@ export function TaskList({
                             if (e.key === 'Escape') cancelEdit();
                           }}
                           autoFocus
-                          className="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                          aria-label="Edit task"
+                          className="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-gray-700 dark:text-white"
                         />
                         <button
                           onClick={() => saveEdit(task.id)}
-                          className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                          aria-label="Save changes"
+                          className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm transition-colors"
                         >
                           Save
                         </button>
                         <button
                           onClick={cancelEdit}
-                          className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
+                          aria-label="Cancel editing"
+                          className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm transition-colors"
                         >
                           Cancel
                         </button>
@@ -187,16 +191,17 @@ export function TaskList({
                     ) : (
                       <>
                         <div className="flex-1 flex flex-col gap-2">
-                          <span
+                          <button
                             onClick={() => startEdit(task)}
-                            className={`cursor-pointer ${
+                            className={`text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded px-1 -ml-1 ${
                               task.completed
                                 ? 'line-through text-gray-500 dark:text-gray-400'
                                 : 'text-gray-900 dark:text-gray-100'
                             }`}
+                            aria-label={`Edit task: ${task.todo}`}
                           >
                             {task.todo}
-                          </span>
+                          </button>
                           {categoryEditingId === task.id ? (
                             <CategorySelector
                               categories={categories}
@@ -222,7 +227,8 @@ export function TaskList({
                               )}
                               <button
                                 onClick={() => setCategoryEditingId(task.id)}
-                                className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                                aria-label={taskCategoryMap[task.id] ? 'Change category' : 'Add category'}
+                                className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded px-1"
                               >
                                 {taskCategoryMap[task.id] ? 'Change' : 'Add category'}
                               </button>
@@ -231,8 +237,8 @@ export function TaskList({
                         </div>
                         <button
                           onClick={() => onDelete(task.id)}
-                          className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm transition-opacity focus:opacity-100"
-                          aria-label="Delete task"
+                          className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-sm transition-opacity focus:opacity-100"
+                          aria-label={`Delete task: ${task.todo}`}
                         >
                           Delete
                         </button>

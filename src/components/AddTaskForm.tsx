@@ -33,12 +33,15 @@ export function AddTaskForm({ onAdd, loading = false }: AddTaskFormProps) {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Add a new task..."
           disabled={isSubmitting || loading}
-          className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white disabled:opacity-50"
+          aria-label="Task input"
+          aria-describedby="task-input-help"
+          className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-white disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={!input.trim() || isSubmitting || loading}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          aria-label="Add task"
+          className="px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? 'Adding...' : 'Add'}
         </button>
