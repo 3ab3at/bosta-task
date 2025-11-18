@@ -4,6 +4,7 @@ export interface Task {
   completed: boolean;
   userId: number;
   categoryId?: string;
+  dueDate?: string; // ISO date string
 }
 
 export interface TaskResponse {

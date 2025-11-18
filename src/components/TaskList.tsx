@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import type { Task } from '../types/task';
 import type { Category } from '../types/category';
 import { CategorySelector } from './CategorySelector';
+import { DatePicker } from './DatePicker';
 
 interface TaskListProps {
   tasks: Task[];
@@ -10,11 +11,13 @@ interface TaskListProps {
   error: string | null;
   categories: Category[];
   taskCategoryMap: { [taskId: number]: string };
+  taskDueDateMap: { [taskId: number]: string };
   onToggle: (id: number, completed: boolean) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
   onUpdate: (id: number, todo: string) => Promise<void>;
   onReorder: (startIndex: number, endIndex: number) => void;
   onCategoryChange: (taskId: number, categoryId: string | undefined) => void;
+  onDueDateChange: (taskId: number, dueDate: string | undefined) => void;
 }
 
 export function TaskList({
@@ -23,11 +26,13 @@ export function TaskList({
   error,
   categories,
   taskCategoryMap,
+  taskDueDateMap,
   onToggle,
   onDelete,
   onUpdate,
   onReorder,
   onCategoryChange,
+  onDueDateChange,
 }: TaskListProps) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
@@ -213,7 +218,7 @@ export function TaskList({
                               taskId={task.id}
                             />
                           ) : (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               {taskCategoryMap[task.id] && (
                                 <span
                                   className="px-2 py-1 rounded-full text-xs font-medium"
@@ -232,6 +237,11 @@ export function TaskList({
                               >
                                 {taskCategoryMap[task.id] ? 'Change' : 'Add category'}
                               </button>
+                              <DatePicker
+                                value={taskDueDateMap[task.id]}
+                                onChange={(dueDate) => onDueDateChange(task.id, dueDate)}
+                                taskId={task.id}
+                              />
                             </div>
                           )}
                         </div>

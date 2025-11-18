@@ -8,13 +8,21 @@ import { AddTaskForm } from './components/AddTaskForm';
 import { FilterBar } from './components/FilterBar';
 import { ThemeToggle } from './components/ThemeToggle';
 import { CategoryManager } from './components/CategoryManager';
-import { getTaskCategories, setTaskCategory, type TaskCategoryMap } from './utils/taskStorage';
+import {
+  getTaskCategories,
+  setTaskCategory,
+  getTaskDueDates,
+  setTaskDueDate,
+  type TaskCategoryMap,
+  type TaskDueDateMap,
+} from './utils/taskStorage';
 
 function App() {
   const { tasks, loading, error, addTask, updateTask, deleteTask, toggleTask, reorderTasks } = useTasks();
   const { categories, addCategory, updateCategory, deleteCategory } = useCategories();
   const { theme, toggleTheme } = useTheme();
   const [taskCategoryMap, setTaskCategoryMap] = useState<TaskCategoryMap>(() => getTaskCategories());
+  const [taskDueDateMap, setTaskDueDateMap] = useState<TaskDueDateMap>(() => getTaskDueDates());
   
   const {
     filteredTasks,
@@ -25,9 +33,11 @@ function App() {
   } = useTaskFilter(tasks);
 
   useEffect(() => {
-    // Sync taskCategoryMap with localStorage
-    const stored = getTaskCategories();
-    setTaskCategoryMap(stored);
+    // Sync taskCategoryMap and taskDueDateMap with localStorage
+    const storedCategories = getTaskCategories();
+    const storedDueDates = getTaskDueDates();
+    setTaskCategoryMap(storedCategories);
+    setTaskDueDateMap(storedDueDates);
   }, []);
 
   const handleCategoryChange = (taskId: number, categoryId: string | undefined) => {
@@ -36,6 +46,19 @@ function App() {
       const updated = { ...prev };
       if (categoryId) {
         updated[taskId] = categoryId;
+      } else {
+        delete updated[taskId];
+      }
+      return updated;
+    });
+  };
+
+  const handleDueDateChange = (taskId: number, dueDate: string | undefined) => {
+    setTaskDueDate(taskId, dueDate);
+    setTaskDueDateMap((prev) => {
+      const updated = { ...prev };
+      if (dueDate) {
+        updated[taskId] = dueDate;
       } else {
         delete updated[taskId];
       }
@@ -90,11 +113,13 @@ function App() {
           error={error}
           categories={categories}
           taskCategoryMap={taskCategoryMap}
+          taskDueDateMap={taskDueDateMap}
           onToggle={toggleTask}
           onDelete={deleteTask}
           onUpdate={handleUpdateTask}
           onReorder={handleReorder}
           onCategoryChange={handleCategoryChange}
+          onDueDateChange={handleDueDateChange}
         />
       </div>
     </div>

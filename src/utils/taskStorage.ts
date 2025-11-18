@@ -1,15 +1,20 @@
-// Utility to sync task categories with localStorage
-// Since the API doesn't support categories, we'll store category mappings locally
+// Utility to sync task categories and due dates with localStorage
+// Since the API doesn't support these, we'll store them locally
 
-const STORAGE_KEY = 'task-manager-task-categories';
+const CATEGORY_STORAGE_KEY = 'task-manager-task-categories';
+const DUE_DATE_STORAGE_KEY = 'task-manager-task-due-dates';
 
 export interface TaskCategoryMap {
   [taskId: number]: string; // taskId -> categoryId
 }
 
+export interface TaskDueDateMap {
+  [taskId: number]: string; // taskId -> ISO date string
+}
+
 export function getTaskCategories(): TaskCategoryMap {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(CATEGORY_STORAGE_KEY);
     if (stored) {
       return JSON.parse(stored);
     }
@@ -27,7 +32,7 @@ export function setTaskCategory(taskId: number, categoryId: string | undefined) 
     } else {
       delete map[taskId];
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+    localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(map));
   } catch (error) {
     console.error('Failed to save task category to localStorage:', error);
   }
@@ -38,3 +43,33 @@ export function getTaskCategory(taskId: number): string | undefined {
   return map[taskId];
 }
 
+export function getTaskDueDates(): TaskDueDateMap {
+  try {
+    const stored = localStorage.getItem(DUE_DATE_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Failed to load task due dates from localStorage:', error);
+  }
+  return {};
+}
+
+export function setTaskDueDate(taskId: number, dueDate: string | undefined) {
+  try {
+    const map = getTaskDueDates();
+    if (dueDate) {
+      map[taskId] = dueDate;
+    } else {
+      delete map[taskId];
+    }
+    localStorage.setItem(DUE_DATE_STORAGE_KEY, JSON.stringify(map));
+  } catch (error) {
+    console.error('Failed to save task due date to localStorage:', error);
+  }
+}
+
+export function getTaskDueDate(taskId: number): string | undefined {
+  const map = getTaskDueDates();
+  return map[taskId];
+}
