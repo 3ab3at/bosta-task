@@ -179,7 +179,7 @@ The application integrates with the DummyJSON API for task management:
 - Calendar integration with date selection
 
 ### Keyboard Shortcuts
-- `Alt + N` or `Ctrl/Cmd + Shift + N` - Focus add task input
+- `Ctrl/Cmd + Shift + A` - Focus add task input
 - `Ctrl/Cmd + K` or `/` - Focus search bar
 - `Esc` - Cancel editing or close modals
 - Keyboard shortcuts help modal accessible from header
@@ -240,8 +240,7 @@ The application is fully responsive with breakpoints:
 
 | Shortcut | Action |
 |----------|--------|
-| `Alt + N` | Focus add task input |
-| `Ctrl/Cmd + Shift + N` | Focus add task input (alternative) |
+| `Ctrl/Cmd + Shift + A` | Focus add task input |
 | `Ctrl/Cmd + K` | Focus search bar |
 | `/` | Focus search bar |
 | `Esc` | Cancel editing / Close modals |
