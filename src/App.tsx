@@ -5,7 +5,7 @@ import { AddTaskForm } from './components/AddTaskForm';
 import { FilterBar } from './components/FilterBar';
 
 function App() {
-  const { tasks, loading, error, addTask, updateTask, deleteTask, toggleTask } = useTasks();
+  const { tasks, loading, error, addTask, updateTask, deleteTask, toggleTask, reorderTasks } = useTasks();
   const {
     filteredTasks,
     filterStatus,
@@ -20,6 +20,17 @@ function App() {
 
   const handleUpdateTask = async (id: number, todo: string) => {
     await updateTask(id, { todo });
+  };
+
+  const handleReorder = (startIndex: number, endIndex: number) => {
+    // Map filtered indices back to original task indices
+    const startTask = filteredTasks[startIndex];
+    const endTask = filteredTasks[endIndex];
+    
+    const startOriginalIndex = tasks.findIndex((t) => t.id === startTask.id);
+    const endOriginalIndex = tasks.findIndex((t) => t.id === endTask.id);
+    
+    reorderTasks(startOriginalIndex, endOriginalIndex);
   };
 
   return (
@@ -42,6 +53,7 @@ function App() {
           onToggle={toggleTask}
           onDelete={deleteTask}
           onUpdate={handleUpdateTask}
+          onReorder={handleReorder}
         />
       </div>
     </div>

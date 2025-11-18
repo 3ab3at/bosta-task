@@ -62,6 +62,15 @@ export function useTasks() {
     await updateTask(id, { completed });
   };
 
+  const reorderTasks = (startIndex: number, endIndex: number) => {
+    setTasks((prev) => {
+      const result = Array.from(prev);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return result;
+    });
+  };
+
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -75,6 +84,7 @@ export function useTasks() {
     updateTask,
     deleteTask,
     toggleTask,
+    reorderTasks,
   };
 }
 
