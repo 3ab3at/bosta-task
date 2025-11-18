@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import type { Task } from '../types/task';
 import type { Category } from '../types/category';
@@ -228,14 +228,13 @@ export function TaskList({
                             {task.todo}
                           </button>
                           {categoryEditingId === task.id ? (
-                            <CategorySelector
+                              <CategorySelector
                               categories={categories}
                               selectedCategoryId={taskCategoryMap[task.id]}
                               onSelect={(categoryId) => {
                                 onCategoryChange(task.id, categoryId);
                                 setCategoryEditingId(null);
                               }}
-                              taskId={task.id}
                             />
                           ) : (
                             <div className="flex items-center gap-2 flex-wrap">
@@ -246,7 +245,6 @@ export function TaskList({
                                   style={{
                                     backgroundColor: `${categories.find((c) => c.id === taskCategoryMap[task.id])?.color}40`,
                                     color: categories.find((c) => c.id === taskCategoryMap[task.id])?.color,
-                                    ringColor: categories.find((c) => c.id === taskCategoryMap[task.id])?.color,
                                   }}
                                   aria-label={`Change category: ${categories.find((c) => c.id === taskCategoryMap[task.id])?.name}`}
                                 >
@@ -264,7 +262,6 @@ export function TaskList({
                               <DatePicker
                                 value={taskDueDateMap[task.id]}
                                 onChange={(dueDate) => onDueDateChange(task.id, dueDate)}
-                                taskId={task.id}
                               />
                             </div>
                           )}

@@ -4,14 +4,12 @@ interface CategorySelectorProps {
   categories: Category[];
   selectedCategoryId?: string;
   onSelect: (categoryId: string | undefined) => void;
-  taskId: number;
 }
 
 export function CategorySelector({
   categories,
   selectedCategoryId,
   onSelect,
-  taskId,
 }: CategorySelectorProps) {
   return (
     <div className="flex items-center gap-2 flex-wrap">
@@ -41,8 +39,8 @@ export function CategorySelector({
           style={{
             backgroundColor: selectedCategoryId === category.id ? category.color : `${category.color}40`,
             color: selectedCategoryId === category.id ? '#fff' : category.color,
-            ringColor: category.color,
-          }}
+            '--ring-color': category.color,
+          } as React.CSSProperties & { '--ring-color'?: string }}
         >
           {category.name}
         </button>

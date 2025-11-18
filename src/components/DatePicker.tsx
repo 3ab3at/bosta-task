@@ -3,10 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 interface DatePickerProps {
   value?: string; // ISO date string
   onChange: (date: string | undefined) => void;
-  taskId: number;
 }
 
-export function DatePicker({ value, onChange, taskId }: DatePickerProps) {
+export function DatePicker({ value, onChange }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(value ? new Date(value) : null);
   const dateInputRef = useRef<HTMLInputElement>(null);
