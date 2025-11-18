@@ -11,13 +11,42 @@ class ApiError extends Error {
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new ApiError(
-      response.status,
-      errorData.message || `HTTP error! status: ${response.status}`
-    );
+    let errorMessage = `HTTP error! status: ${response.status}`;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage;
+    } catch {
+      // If response is not JSON, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new ApiError(response.status, errorMessage);
   }
-  return response.json();
+  
+  try {
+    return await response.json();
+  } catch (error) {
+    throw new Error('Invalid response format from server');
+  }
+}
+
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 10000): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timeout. Please check your internet connection.');
+    }
+    throw error;
+  }
 }
 
 export const taskApi = {
@@ -26,11 +55,14 @@ export const taskApi = {
    */
   async getAllTasks(): Promise<Task[]> {
     try {
-      const response = await fetch(`${BASE_URL}/todos`);
+      const response = await fetchWithTimeout(`${BASE_URL}/todos`);
       const data: TaskResponse = await handleResponse<TaskResponse>(response);
+      if (!data.todos || !Array.isArray(data.todos)) {
+        throw new Error('Invalid data format received from server');
+      }
       return data.todos;
     } catch (error) {
-      if (error instanceof ApiError) {
+      if (error instanceof ApiError || error instanceof Error) {
         throw error;
       }
       throw new Error('Failed to fetch tasks. Please check your internet connection.');
@@ -42,10 +74,10 @@ export const taskApi = {
    */
   async getTaskById(id: number): Promise<Task> {
     try {
-      const response = await fetch(`${BASE_URL}/todos/${id}`);
+      const response = await fetchWithTimeout(`${BASE_URL}/todos/${id}`);
       return handleResponse<Task>(response);
     } catch (error) {
-      if (error instanceof ApiError) {
+      if (error instanceof ApiError || error instanceof Error) {
         throw error;
       }
       throw new Error(`Failed to fetch task ${id}. Please check your internet connection.`);
@@ -57,7 +89,10 @@ export const taskApi = {
    */
   async createTask(task: CreateTaskRequest): Promise<Task> {
     try {
-      const response = await fetch(`${BASE_URL}/todos/add`, {
+      if (!task.todo || !task.todo.trim()) {
+        throw new Error('Task text cannot be empty');
+      }
+      const response = await fetchWithTimeout(`${BASE_URL}/todos/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +101,7 @@ export const taskApi = {
       });
       return handleResponse<Task>(response);
     } catch (error) {
-      if (error instanceof ApiError) {
+      if (error instanceof ApiError || error instanceof Error) {
         throw error;
       }
       throw new Error('Failed to create task. Please check your internet connection.');
@@ -78,7 +113,10 @@ export const taskApi = {
    */
   async updateTask(id: number, updates: UpdateTaskRequest): Promise<Task> {
     try {
-      const response = await fetch(`${BASE_URL}/todos/${id}`, {
+      if (updates.todo !== undefined && (!updates.todo || !updates.todo.trim())) {
+        throw new Error('Task text cannot be empty');
+      }
+      const response = await fetchWithTimeout(`${BASE_URL}/todos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +125,7 @@ export const taskApi = {
       });
       return handleResponse<Task>(response);
     } catch (error) {
-      if (error instanceof ApiError) {
+      if (error instanceof ApiError || error instanceof Error) {
         throw error;
       }
       throw new Error(`Failed to update task ${id}. Please check your internet connection.`);
@@ -99,12 +137,12 @@ export const taskApi = {
    */
   async deleteTask(id: number): Promise<Task> {
     try {
-      const response = await fetch(`${BASE_URL}/todos/${id}`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/todos/${id}`, {
         method: 'DELETE',
       });
       return handleResponse<Task>(response);
     } catch (error) {
-      if (error instanceof ApiError) {
+      if (error instanceof ApiError || error instanceof Error) {
         throw error;
       }
       throw new Error(`Failed to delete task ${id}. Please check your internet connection.`);
