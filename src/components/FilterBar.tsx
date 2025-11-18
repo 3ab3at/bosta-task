@@ -5,6 +5,7 @@ interface FilterBarProps {
   onFilterChange: (status: FilterStatus) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  searchInputRef?: React.RefObject<HTMLInputElement>;
 }
 
 export function FilterBar({
@@ -12,16 +13,18 @@ export function FilterBar({
   onFilterChange,
   searchQuery,
   onSearchChange,
+  searchInputRef,
 }: FilterBarProps) {
   return (
     <div className="mb-6 space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <input
+            ref={searchInputRef}
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search tasks..."
+            placeholder="Search tasks... (Press / or Ctrl+K)"
             aria-label="Search tasks"
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-white"
           />

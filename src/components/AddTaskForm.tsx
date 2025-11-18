@@ -3,9 +3,10 @@ import { useState, FormEvent } from 'react';
 interface AddTaskFormProps {
   onAdd: (todo: string) => Promise<void>;
   loading?: boolean;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
-export function AddTaskForm({ onAdd, loading = false }: AddTaskFormProps) {
+export function AddTaskForm({ onAdd, loading = false, inputRef }: AddTaskFormProps) {
   const [input, setInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,10 +29,11 @@ export function AddTaskForm({ onAdd, loading = false }: AddTaskFormProps) {
     <form onSubmit={handleSubmit} className="mb-6">
       <div className="flex gap-2">
         <input
+          ref={inputRef}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Add a new task..."
+          placeholder="Add a new task... (Press Ctrl+N)"
           disabled={isSubmitting || loading}
           aria-label="Task input"
           aria-describedby="task-input-help"

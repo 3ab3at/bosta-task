@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTasks } from './hooks/useTasks';
 import { useTaskFilter } from './hooks/useTaskFilter';
 import { useCategories } from './hooks/useCategories';
@@ -8,6 +8,8 @@ import { AddTaskForm } from './components/AddTaskForm';
 import { FilterBar } from './components/FilterBar';
 import { ThemeToggle } from './components/ThemeToggle';
 import { CategoryManager } from './components/CategoryManager';
+import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import {
   getTaskCategories,
   setTaskCategory,
@@ -23,6 +25,8 @@ function App() {
   const { theme, toggleTheme } = useTheme();
   const [taskCategoryMap, setTaskCategoryMap] = useState<TaskCategoryMap>(() => getTaskCategories());
   const [taskDueDateMap, setTaskDueDateMap] = useState<TaskDueDateMap>(() => getTaskDueDates());
+  const addTaskInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   
   const {
     filteredTasks,
@@ -31,6 +35,15 @@ function App() {
     searchQuery,
     setSearchQuery,
   } = useTaskFilter(tasks);
+
+  useKeyboardShortcuts({
+    onAddTask: () => {
+      addTaskInputRef.current?.focus();
+    },
+    onFocusSearch: () => {
+      searchInputRef.current?.focus();
+    },
+  });
 
   useEffect(() => {
     // Sync taskCategoryMap and taskDueDateMap with localStorage
@@ -92,7 +105,10 @@ function App() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             Personal Task Manager
           </h1>
-          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <div className="flex items-center gap-2">
+            <KeyboardShortcutsHelp />
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          </div>
         </div>
         <CategoryManager
           categories={categories}
@@ -100,12 +116,13 @@ function App() {
           onUpdateCategory={updateCategory}
           onDeleteCategory={deleteCategory}
         />
-        <AddTaskForm onAdd={handleAddTask} loading={loading} />
+        <AddTaskForm onAdd={handleAddTask} loading={loading} inputRef={addTaskInputRef} />
         <FilterBar
           filterStatus={filterStatus}
           onFilterChange={setFilterStatus}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          searchInputRef={searchInputRef}
         />
         <TaskList
           tasks={filteredTasks}
