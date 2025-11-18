@@ -7,11 +7,12 @@ import { TaskList } from './components/TaskList';
 import { AddTaskForm } from './components/AddTaskForm';
 import { FilterBar } from './components/FilterBar';
 import { ThemeToggle } from './components/ThemeToggle';
+import { CategoryManager } from './components/CategoryManager';
 import { getTaskCategories, setTaskCategory, type TaskCategoryMap } from './utils/taskStorage';
 
 function App() {
   const { tasks, loading, error, addTask, updateTask, deleteTask, toggleTask, reorderTasks } = useTasks();
-  const { categories } = useCategories();
+  const { categories, addCategory, updateCategory, deleteCategory } = useCategories();
   const { theme, toggleTheme } = useTheme();
   const [taskCategoryMap, setTaskCategoryMap] = useState<TaskCategoryMap>(() => getTaskCategories());
   
@@ -70,6 +71,12 @@ function App() {
           </h1>
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </div>
+        <CategoryManager
+          categories={categories}
+          onAddCategory={addCategory}
+          onUpdateCategory={updateCategory}
+          onDeleteCategory={deleteCategory}
+        />
         <AddTaskForm onAdd={handleAddTask} loading={loading} />
         <FilterBar
           filterStatus={filterStatus}
