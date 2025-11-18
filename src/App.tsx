@@ -55,14 +55,28 @@ function App() {
     setTaskDueDateMap(storedDueDates);
   }, []);
 
+  // Sync category map when tasks change (in case new tasks are added)
+  useEffect(() => {
+    const storedCategories = getTaskCategories();
+    setTaskCategoryMap(storedCategories);
+  }, [tasks]);
+
   const handleCategoryChange = (taskId: number, categoryId: string | undefined) => {
+    // Update localStorage first
     setTaskCategory(taskId, categoryId);
+    // Then update state
     setTaskCategoryMap((prev) => {
       const updated = { ...prev };
       if (categoryId) {
         updated[taskId] = categoryId;
       } else {
         delete updated[taskId];
+      }
+      // Also update localStorage to ensure consistency
+      try {
+        localStorage.setItem('task-manager-task-categories', JSON.stringify(updated));
+      } catch (error) {
+        console.error('Failed to save category map:', error);
       }
       return updated;
     });
