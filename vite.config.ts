@@ -9,5 +9,13 @@ export default defineConfig({
       'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://dummyjson.com;",
     },
   },
+  // Ensure proper base path for deployment
+  base: '/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'esbuild',
+  },
 })
 
