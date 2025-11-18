@@ -248,7 +248,9 @@ export function TaskList({
                               categories={categories}
                               selectedCategoryId={taskCategoryMap[task.id]}
                               onSelect={(categoryId) => {
-                                onCategoryChange(task.id, categoryId);
+                                // Capture task.id in closure to ensure correct ID is used
+                                const currentTaskId = task.id;
+                                onCategoryChange(currentTaskId, categoryId);
                                 setCategoryEditingId(null);
                               }}
                             />

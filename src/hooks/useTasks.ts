@@ -53,18 +53,14 @@ export function useTasks() {
   const addTask = async (taskData: CreateTaskRequest) => {
     try {
       setError(null);
-      let newTask: Task;
-      try {
-        newTask = await taskApi.createTask(taskData);
-      } catch (apiErr) {
-        // If API fails, create task locally with generated ID
-        newTask = {
-          id: nextIdRef.current++,
-          todo: taskData.todo,
-          completed: taskData.completed || false,
-          userId: taskData.userId || 1,
-        };
-      }
+      // Create task locally only - don't use API for user-created tasks
+      // API doesn't persist, so we store everything locally
+      const newTask: Task = {
+        id: nextIdRef.current++,
+        todo: taskData.todo,
+        completed: taskData.completed || false,
+        userId: taskData.userId || 1,
+      };
       setTasks((prev) => {
         const updated = [newTask, ...prev];
         setStoredTasks(updated);
@@ -81,13 +77,25 @@ export function useTasks() {
   const updateTask = async (id: number, updates: UpdateTaskRequest) => {
     try {
       setError(null);
+      // Check if task is user-created (ID >= 1000) or from API
+      const isUserCreated = id >= 1000;
+      
       let updatedTask: Task;
-      try {
-        updatedTask = await taskApi.updateTask(id, updates);
-      } catch (apiErr) {
-        // If API fails, update locally
-        updatedTask = { id, ...updates } as Task;
+      if (isUserCreated) {
+        // User-created tasks: update locally only
+        const currentTask = tasks.find(t => t.id === id);
+        updatedTask = currentTask ? { ...currentTask, ...updates } : { id, ...updates } as Task;
+      } else {
+        // API tasks: try API first, fallback to local
+        try {
+          updatedTask = await taskApi.updateTask(id, updates);
+        } catch (apiErr) {
+          // If API fails, update locally
+          const currentTask = tasks.find(t => t.id === id);
+          updatedTask = currentTask ? { ...currentTask, ...updates } : { id, ...updates } as Task;
+        }
       }
+      
       setTasks((prev) => {
         const updated = prev.map((task) => (task.id === id ? updatedTask : task));
         setStoredTasks(updated);
@@ -96,25 +104,34 @@ export function useTasks() {
       return updatedTask;
     } catch (err) {
       // Fallback: update locally
+      const currentTask = tasks.find(t => t.id === id);
+      const updatedTask = currentTask ? { ...currentTask, ...updates } : { id, ...updates } as Task;
       setTasks((prev) => {
         const updated = prev.map((task) => 
-          task.id === id ? { ...task, ...updates } : task
+          task.id === id ? updatedTask : task
         );
         setStoredTasks(updated);
         return updated;
       });
-      return { id, ...updates } as Task;
+      return updatedTask;
     }
   };
 
   const deleteTask = async (id: number) => {
     try {
       setError(null);
-      try {
-        await taskApi.deleteTask(id);
-      } catch (apiErr) {
-        // If API fails, continue with local delete
+      // Check if task is user-created (ID >= 1000) or from API
+      const isUserCreated = id >= 1000;
+      
+      if (!isUserCreated) {
+        // Only try API for API tasks
+        try {
+          await taskApi.deleteTask(id);
+        } catch (apiErr) {
+          // If API fails, continue with local delete
+        }
       }
+      
       setTasks((prev) => {
         const updated = prev.filter((task) => task.id !== id);
         setStoredTasks(updated);
