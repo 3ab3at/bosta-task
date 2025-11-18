@@ -14,7 +14,6 @@ import { Statistics } from './components/Statistics';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import {
   getTaskCategories,
-  setTaskCategory,
   getTaskDueDates,
   setTaskDueDate,
   type TaskCategoryMap,
