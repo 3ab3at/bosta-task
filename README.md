@@ -271,10 +271,8 @@ The application is fully responsive with breakpoints:
 This project is created as part of a technical assessment.
 
 ## 👤 Author
-
+Abdelaty Rehab
 Created as part of the Junior Frontend Engineer Assessment.
 
 ---
-
-**Note**: This application uses the DummyJSON API for demonstration purposes. In a production environment, you would replace this with your own backend API.
 
