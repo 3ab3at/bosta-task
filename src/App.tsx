@@ -10,6 +10,7 @@ import { ThemeToggle } from './components/ThemeToggle';
 import { CategoryManager } from './components/CategoryManager';
 import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp';
 import { ExportButton } from './components/ExportButton';
+import { Statistics } from './components/Statistics';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import {
   getTaskCategories,
@@ -124,6 +125,12 @@ function App() {
           onDeleteCategory={deleteCategory}
         />
         <AddTaskForm onAdd={handleAddTask} loading={loading} inputRef={addTaskInputRef} />
+        <Statistics
+          tasks={tasks}
+          categories={categories}
+          taskCategoryMap={taskCategoryMap}
+          taskDueDateMap={taskDueDateMap}
+        />
         <FilterBar
           filterStatus={filterStatus}
           onFilterChange={setFilterStatus}
