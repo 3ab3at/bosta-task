@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { taskApi } from '../services/api';
-import type { Task } from '../types/task';
+import type { Task, CreateTaskRequest, UpdateTaskRequest } from '../types/task';
 
 export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -20,10 +20,61 @@ export function useTasks() {
     }
   };
 
+  const addTask = async (taskData: CreateTaskRequest) => {
+    try {
+      setError(null);
+      const newTask = await taskApi.createTask(taskData);
+      setTasks((prev) => [newTask, ...prev]);
+      return newTask;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create task';
+      setError(errorMessage);
+      throw err;
+    }
+  };
+
+  const updateTask = async (id: number, updates: UpdateTaskRequest) => {
+    try {
+      setError(null);
+      const updatedTask = await taskApi.updateTask(id, updates);
+      setTasks((prev) => prev.map((task) => (task.id === id ? updatedTask : task)));
+      return updatedTask;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update task';
+      setError(errorMessage);
+      throw err;
+    }
+  };
+
+  const deleteTask = async (id: number) => {
+    try {
+      setError(null);
+      await taskApi.deleteTask(id);
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete task';
+      setError(errorMessage);
+      throw err;
+    }
+  };
+
+  const toggleTask = async (id: number, completed: boolean) => {
+    await updateTask(id, { completed });
+  };
+
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  return { tasks, loading, error, refetch: fetchTasks };
+  return {
+    tasks,
+    loading,
+    error,
+    refetch: fetchTasks,
+    addTask,
+    updateTask,
+    deleteTask,
+    toggleTask,
+  };
 }
 
