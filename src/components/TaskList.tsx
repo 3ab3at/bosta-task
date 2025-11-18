@@ -89,7 +89,22 @@ export function TaskList({
       return;
     }
 
-    onReorder(result.source.index, result.destination.index);
+    // Extract task ID from draggableId (format: "task-{id}")
+    const sourceId = parseInt(result.draggableId.replace('task-', ''), 10);
+    const destId = parseInt(
+      tasks[result.destination.index]?.id.toString().replace('task-', '') || '0',
+      10
+    );
+
+    // Find the actual indices in the filtered array
+    const sourceIndex = tasks.findIndex((t) => t.id === sourceId);
+    const destIndex = tasks.findIndex((t) => t.id === destId);
+
+    if (sourceIndex === -1 || destIndex === -1) {
+      return;
+    }
+
+    onReorder(sourceIndex, destIndex);
   };
 
   if (loading) {
@@ -135,8 +150,11 @@ export function TaskList({
     );
   }
 
+  // Create a stable key for the DragDropContext based on task IDs
+  const tasksKey = tasks.map(t => t.id).join(',');
+
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropContext key={tasksKey} onDragEnd={handleDragEnd}>
       <Droppable droppableId="tasks">
         {(provided, snapshot) => (
           <div
@@ -145,7 +163,7 @@ export function TaskList({
             className={`space-y-2 ${snapshot.isDraggingOver ? 'bg-blue-50 dark:bg-blue-900/10 rounded-lg p-2' : ''}`}
           >
             {tasks.map((task, index) => (
-              <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
+              <Draggable key={`task-${task.id}`} draggableId={`task-${task.id}`} index={index}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
