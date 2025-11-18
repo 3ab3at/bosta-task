@@ -9,6 +9,7 @@ import { FilterBar } from './components/FilterBar';
 import { ThemeToggle } from './components/ThemeToggle';
 import { CategoryManager } from './components/CategoryManager';
 import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp';
+import { ExportButton } from './components/ExportButton';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import {
   getTaskCategories,
@@ -106,6 +107,12 @@ function App() {
             Personal Task Manager
           </h1>
           <div className="flex items-center gap-2">
+            <ExportButton
+              tasks={tasks}
+              categories={categories}
+              taskCategoryMap={taskCategoryMap}
+              taskDueDateMap={taskDueDateMap}
+            />
             <KeyboardShortcutsHelp />
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
           </div>
