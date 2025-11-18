@@ -132,6 +132,7 @@ export function TaskList({
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
+                    style={provided.draggableProps.style}
                     className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex items-center gap-3 group transition-transform ${
                       snapshot.isDragging
                         ? 'shadow-lg scale-105 border-blue-400 dark:border-blue-600'
@@ -140,8 +141,9 @@ export function TaskList({
                   >
                     <div
                       {...provided.dragHandleProps}
-                      className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0"
                       aria-label="Drag to reorder"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <svg
                         className="w-5 h-5"
