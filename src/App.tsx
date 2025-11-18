@@ -54,21 +54,8 @@ function App() {
     setTaskDueDateMap(storedDueDates);
   }, []);
 
-  // Sync category map when tasks change (in case new tasks are added)
-  // Only add categories for new tasks, don't overwrite existing assignments
-  useEffect(() => {
-    const storedCategories = getTaskCategories();
-    setTaskCategoryMap((prev) => {
-      // Only add categories for tasks that don't have one yet
-      const updated = { ...prev };
-      tasks.forEach((task) => {
-        if (storedCategories[task.id] && !updated[task.id]) {
-          updated[task.id] = storedCategories[task.id];
-        }
-      });
-      return updated;
-    });
-  }, [tasks]);
+  // Don't sync categories when tasks change - this was causing the bug
+  // Categories are managed independently and persist in localStorage
 
   const handleCategoryChange = (taskId: number, categoryId: string | undefined) => {
     // Update state and localStorage atomically
