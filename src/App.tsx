@@ -56,15 +56,17 @@ function App() {
   }, []);
 
   // Sync category map when tasks change (in case new tasks are added)
+  // Only merge new tasks, don't overwrite existing category assignments
   useEffect(() => {
     const storedCategories = getTaskCategories();
-    setTaskCategoryMap(storedCategories);
+    setTaskCategoryMap((prev) => {
+      // Merge with existing state, preserving current assignments
+      return { ...prev, ...storedCategories };
+    });
   }, [tasks]);
 
   const handleCategoryChange = (taskId: number, categoryId: string | undefined) => {
-    // Update localStorage first
-    setTaskCategory(taskId, categoryId);
-    // Then update state
+    // Update state and localStorage atomically
     setTaskCategoryMap((prev) => {
       const updated = { ...prev };
       if (categoryId) {
@@ -72,7 +74,7 @@ function App() {
       } else {
         delete updated[taskId];
       }
-      // Also update localStorage to ensure consistency
+      // Update localStorage to persist the change
       try {
         localStorage.setItem('task-manager-task-categories', JSON.stringify(updated));
       } catch (error) {
