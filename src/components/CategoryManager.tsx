@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Category } from '../types/category';
 
 interface CategoryManagerProps {
@@ -32,6 +32,25 @@ export function CategoryManager({
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryColor, setNewCategoryColor] = useState(PRESET_COLORS[0]);
   const [editName, setEditName] = useState('');
+
+  // Handle escape key to close panel or cancel editing
+  useEffect(() => {
+    if (!isOpen && !editingId) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (editingId) {
+          setEditingId(null);
+          setEditName('');
+        } else if (isOpen) {
+          setIsOpen(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isOpen, editingId]);
 
   const handleAddCategory = () => {
     if (!newCategoryName.trim()) return;

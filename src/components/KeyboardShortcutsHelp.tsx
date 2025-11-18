@@ -1,8 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function KeyboardShortcutsHelp() {
   const [isOpen, setIsOpen] = useState(false);
-  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    // Better Mac detection
+    const checkMac = () => {
+      const platform = navigator.platform.toUpperCase();
+      const userAgent = navigator.userAgent.toUpperCase();
+      return platform.indexOf('MAC') >= 0 || userAgent.indexOf('MAC') >= 0;
+    };
+    setIsMac(checkMac());
+  }, []);
+
   const modKey = isMac ? '⌘' : 'Ctrl';
 
   const shortcuts = [
@@ -29,7 +40,15 @@ export function KeyboardShortcutsHelp() {
             className="fixed inset-0 z-40 bg-black/20"
             onClick={() => setIsOpen(false)}
           />
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setIsOpen(false);
+              }
+            }}
+            tabIndex={-1}
+          >
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">

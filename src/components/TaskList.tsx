@@ -38,6 +38,24 @@ export function TaskList({
   const [editValue, setEditValue] = useState('');
   const [categoryEditingId, setCategoryEditingId] = useState<number | null>(null);
 
+  // Handle escape key to cancel editing or category selection
+  useEffect(() => {
+    if (!editingId && !categoryEditingId) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (categoryEditingId) {
+          setCategoryEditingId(null);
+        } else if (editingId) {
+          cancelEdit();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [editingId, categoryEditingId]);
+
   const startEdit = (task: Task) => {
     setEditingId(task.id);
     setEditValue(task.todo);

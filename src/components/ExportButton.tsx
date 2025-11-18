@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Task } from '../types/task';
 import type { Category } from '../types/category';
 import type { TaskCategoryMap, TaskDueDateMap } from '../utils/taskStorage';
@@ -28,6 +28,20 @@ export function ExportButton({
     exportToCSV(tasks, categories, taskCategoryMap, taskDueDateMap);
     setIsOpen(false);
   };
+
+  // Handle escape key to close dropdown
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
 
   return (
     <div className="relative">

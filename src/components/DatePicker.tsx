@@ -65,6 +65,20 @@ export function DatePicker({ value, onChange, taskId }: DatePickerProps) {
   }
   const isOverdue = dueDate && dueDate < today;
 
+  // Handle escape key to close date picker
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
   return (
     <div className="relative">
       <button
