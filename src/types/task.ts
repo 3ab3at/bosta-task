@@ -3,6 +3,7 @@ export interface Task {
   todo: string;
   completed: boolean;
   userId: number;
+  categoryId?: string;
 }
 
 export interface TaskResponse {

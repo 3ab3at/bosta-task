@@ -1,20 +1,37 @@
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import type { Task } from '../types/task';
+import type { Category } from '../types/category';
+import { CategorySelector } from './CategorySelector';
 
 interface TaskListProps {
   tasks: Task[];
   loading: boolean;
   error: string | null;
+  categories: Category[];
+  taskCategoryMap: { [taskId: number]: string };
   onToggle: (id: number, completed: boolean) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
   onUpdate: (id: number, todo: string) => Promise<void>;
   onReorder: (startIndex: number, endIndex: number) => void;
+  onCategoryChange: (taskId: number, categoryId: string | undefined) => void;
 }
 
-export function TaskList({ tasks, loading, error, onToggle, onDelete, onUpdate, onReorder }: TaskListProps) {
+export function TaskList({
+  tasks,
+  loading,
+  error,
+  categories,
+  taskCategoryMap,
+  onToggle,
+  onDelete,
+  onUpdate,
+  onReorder,
+  onCategoryChange,
+}: TaskListProps) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [categoryEditingId, setCategoryEditingId] = useState<number | null>(null);
 
   const startEdit = (task: Task) => {
     setEditingId(task.id);
@@ -151,16 +168,49 @@ export function TaskList({ tasks, loading, error, onToggle, onDelete, onUpdate, 
                       </div>
                     ) : (
                       <>
-                        <span
-                          onClick={() => startEdit(task)}
-                          className={`flex-1 cursor-pointer ${
-                            task.completed
-                              ? 'line-through text-gray-500 dark:text-gray-400'
-                              : 'text-gray-900 dark:text-gray-100'
-                          }`}
-                        >
-                          {task.todo}
-                        </span>
+                        <div className="flex-1 flex flex-col gap-2">
+                          <span
+                            onClick={() => startEdit(task)}
+                            className={`cursor-pointer ${
+                              task.completed
+                                ? 'line-through text-gray-500 dark:text-gray-400'
+                                : 'text-gray-900 dark:text-gray-100'
+                            }`}
+                          >
+                            {task.todo}
+                          </span>
+                          {categoryEditingId === task.id ? (
+                            <CategorySelector
+                              categories={categories}
+                              selectedCategoryId={taskCategoryMap[task.id]}
+                              onSelect={(categoryId) => {
+                                onCategoryChange(task.id, categoryId);
+                                setCategoryEditingId(null);
+                              }}
+                              taskId={task.id}
+                            />
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              {taskCategoryMap[task.id] && (
+                                <span
+                                  className="px-2 py-1 rounded-full text-xs font-medium"
+                                  style={{
+                                    backgroundColor: `${categories.find((c) => c.id === taskCategoryMap[task.id])?.color}40`,
+                                    color: categories.find((c) => c.id === taskCategoryMap[task.id])?.color,
+                                  }}
+                                >
+                                  {categories.find((c) => c.id === taskCategoryMap[task.id])?.name}
+                                </span>
+                              )}
+                              <button
+                                onClick={() => setCategoryEditingId(task.id)}
+                                className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                              >
+                                {taskCategoryMap[task.id] ? 'Change' : 'Add category'}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                         <button
                           onClick={() => onDelete(task.id)}
                           className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm transition-opacity focus:opacity-100"

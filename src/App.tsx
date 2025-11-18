@@ -1,11 +1,17 @@
+import { useState, useEffect } from 'react';
 import { useTasks } from './hooks/useTasks';
 import { useTaskFilter } from './hooks/useTaskFilter';
+import { useCategories } from './hooks/useCategories';
 import { TaskList } from './components/TaskList';
 import { AddTaskForm } from './components/AddTaskForm';
 import { FilterBar } from './components/FilterBar';
+import { getTaskCategories, setTaskCategory, type TaskCategoryMap } from './utils/taskStorage';
 
 function App() {
   const { tasks, loading, error, addTask, updateTask, deleteTask, toggleTask, reorderTasks } = useTasks();
+  const { categories } = useCategories();
+  const [taskCategoryMap, setTaskCategoryMap] = useState<TaskCategoryMap>(() => getTaskCategories());
+  
   const {
     filteredTasks,
     filterStatus,
@@ -13,6 +19,25 @@ function App() {
     searchQuery,
     setSearchQuery,
   } = useTaskFilter(tasks);
+
+  useEffect(() => {
+    // Sync taskCategoryMap with localStorage
+    const stored = getTaskCategories();
+    setTaskCategoryMap(stored);
+  }, []);
+
+  const handleCategoryChange = (taskId: number, categoryId: string | undefined) => {
+    setTaskCategory(taskId, categoryId);
+    setTaskCategoryMap((prev) => {
+      const updated = { ...prev };
+      if (categoryId) {
+        updated[taskId] = categoryId;
+      } else {
+        delete updated[taskId];
+      }
+      return updated;
+    });
+  };
 
   const handleAddTask = async (todo: string) => {
     await addTask({ todo, completed: false, userId: 1 });
@@ -50,10 +75,13 @@ function App() {
           tasks={filteredTasks}
           loading={loading}
           error={error}
+          categories={categories}
+          taskCategoryMap={taskCategoryMap}
           onToggle={toggleTask}
           onDelete={deleteTask}
           onUpdate={handleUpdateTask}
           onReorder={handleReorder}
+          onCategoryChange={handleCategoryChange}
         />
       </div>
     </div>
