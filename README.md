@@ -9,10 +9,14 @@ A modern, responsive Personal Task Manager web application built with React, Typ
 - 🔄 **API Integration**: Full CRUD operations with DummyJSON API
 - 🔍 **Filter & Search**: Filter tasks by status (All, Active, Completed) and search functionality
 - 🎯 **Drag & Drop**: Reorder tasks by dragging them to new positions with visual feedback
-- 🏷️ **Categories**: Create and assign color-coded categories to tasks
+- 🏷️ **Categories**: Create, edit, and manage custom color-coded categories with full CRUD operations
+- 📅 **Due Dates**: Set due dates for tasks with calendar integration and overdue indicators
 - 🌓 **Theme Toggle**: Switch between dark and light modes with localStorage persistence
-- 💾 **Data Persistence**: localStorage for categories and theme preferences (tasks managed via API)
+- 💾 **Data Persistence**: localStorage for categories, due dates, and theme preferences (tasks managed via API)
 - ⚠️ **Error Handling**: Graceful handling of API errors, network issues, and empty states
+- ⌨️ **Keyboard Shortcuts**: Power user shortcuts for quick navigation and task management
+- 📊 **Statistics & Analytics**: Comprehensive dashboard with completion rates, category breakdowns, and due date overview
+- 📥 **Export Functionality**: Export tasks to JSON or CSV format with all metadata
 
 ### Technical Features
 - ⚡ Built with React 18 and TypeScript
@@ -80,13 +84,19 @@ bosta-task/
 ├── src/
 │   ├── components/          # React components
 │   │   ├── AddTaskForm.tsx
+│   │   ├── CategoryManager.tsx
 │   │   ├── CategorySelector.tsx
+│   │   ├── DatePicker.tsx
 │   │   ├── ErrorDisplay.tsx
+│   │   ├── ExportButton.tsx
 │   │   ├── FilterBar.tsx
+│   │   ├── KeyboardShortcutsHelp.tsx
+│   │   ├── Statistics.tsx
 │   │   ├── TaskList.tsx
 │   │   └── ThemeToggle.tsx
 │   ├── hooks/               # Custom React hooks
 │   │   ├── useCategories.ts
+│   │   ├── useKeyboardShortcuts.ts
 │   │   ├── useTaskFilter.ts
 │   │   ├── useTasks.ts
 │   │   └── useTheme.ts
@@ -97,6 +107,7 @@ bosta-task/
 │   │   ├── filter.ts
 │   │   └── task.ts
 │   ├── utils/               # Utility functions
+│   │   ├── export.ts
 │   │   └── taskStorage.ts
 │   ├── App.tsx              # Main app component
 │   ├── main.tsx             # Entry point
@@ -147,16 +158,45 @@ The application integrates with the DummyJSON API for task management:
 - Smooth animations and transitions
 
 ### Categories
-- Pre-defined color-coded categories (Work, Personal, Shopping, Health, Other)
-- Assign categories to tasks
+- Create, edit, and delete custom color-coded categories
+- Pre-defined categories (Work, Personal, Shopping, Health, Other) available by default
+- Color picker with 10 preset colors
+- Assign categories to tasks with visual badges
 - Categories persist in localStorage
-- Visual category badges on tasks
+- Full category management UI with expandable panel
 
 ### Theme Toggle
 - Dark and light mode support
 - Theme preference persists in localStorage
 - Respects system preference on first load
 - Smooth theme transitions
+
+### Due Dates
+- Set due dates for tasks with native date picker
+- Visual indicators for overdue tasks (red), due today (orange), and upcoming tasks
+- Relative date formatting (e.g., "Due in 3 days", "Overdue by 2 days")
+- Due dates persist in localStorage
+- Calendar integration with date selection
+
+### Keyboard Shortcuts
+- `Ctrl/Cmd + N` - Focus add task input
+- `Ctrl/Cmd + K` or `/` - Focus search bar
+- `Esc` - Cancel editing or close modals
+- Keyboard shortcuts help modal accessible from header
+- Smart detection to avoid conflicts when typing in inputs
+
+### Statistics & Analytics
+- Real-time completion statistics (total, completed, active, completion rate)
+- Visual progress bar for completion percentage
+- Tasks breakdown by category with individual progress bars
+- Due date overview (overdue, due today, due this week)
+- Statistics update automatically as tasks change
+
+### Export Functionality
+- Export all tasks to JSON format with full metadata (categories, due dates)
+- Export tasks to CSV for spreadsheet compatibility
+- Exported files include timestamps in filename
+- One-click export from header button
 
 ### Error Handling
 - Network error detection
@@ -196,22 +236,35 @@ The application is fully responsive with breakpoints:
 - Functional components with hooks
 - Modern ES6+ syntax with async/await
 
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl/Cmd + N` | Focus add task input |
+| `Ctrl/Cmd + K` | Focus search bar |
+| `/` | Focus search bar |
+| `Esc` | Cancel editing / Close modals |
+| `Enter` | Save task when editing |
+| `Escape` | Cancel editing |
+
 ## 📝 Known Limitations
 
 - Task reordering is local only (API doesn't support order persistence)
-- Categories are stored locally (not synced with API)
+- Categories and due dates are stored locally (not synced with API)
 - No user authentication (uses mock API)
-- No due dates or reminders (future enhancement)
+- No task reminders or notifications
+- No task priority levels
 
 ## 🚀 Future Enhancements
 
-- Due dates with calendar integration
-- Keyboard shortcuts for power users
-- Export tasks to JSON/CSV functionality
-- Task completion statistics and analytics
 - Task priority levels
 - Subtasks support
 - Task notes/descriptions
+- Task reminders and notifications
+- Recurring tasks
+- Task templates
+- Collaboration features
+- Task sharing
 
 ## 📄 License
 
