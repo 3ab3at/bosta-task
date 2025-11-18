@@ -36,8 +36,11 @@ export function useKeyboardShortcuts({
         searchInputRef.current?.focus();
       }
 
-      // Ctrl/Cmd + N to add new task
-      if ((e.ctrlKey || e.metaKey) && e.key === 'n' && !isTyping) {
+      // Alt + N or Ctrl/Cmd + Shift + N to add new task (avoiding Ctrl+N which opens new window)
+      if (
+        ((e.altKey && e.key === 'n') || ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N')) &&
+        !isTyping
+      ) {
         e.preventDefault();
         onAddTask?.();
       }

@@ -6,7 +6,8 @@ export function KeyboardShortcutsHelp() {
   const modKey = isMac ? '⌘' : 'Ctrl';
 
   const shortcuts = [
-    { keys: [modKey, 'N'], description: 'Add new task' },
+    { keys: ['Alt', 'N'], description: 'Add new task' },
+    { keys: [modKey, 'Shift', 'N'], description: 'Add new task (alternative)' },
     { keys: [modKey, 'K'], description: 'Focus search' },
     { keys: ['/'], description: 'Focus search' },
     { keys: ['Esc'], description: 'Cancel/Close' },
