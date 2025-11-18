@@ -1,8 +1,8 @@
 # Personal Task Manager
-![Screenshot1](assets/images/1.png)
-![Screenshot2](assets/images/2.png)
-![Screenshot3](assets/images/3.png)
-![Screenshot4](assets/images/4.png)
+![Screenshot1](assets/1.png)
+![Screenshot2](assets/2.png)
+![Screenshot3](assets/3.png)
+![Screenshot4](assets/4.png)
 
 A modern, responsive Personal Task Manager web application built with React, TypeScript, and Tailwind CSS. This application allows users to efficiently manage their daily tasks with API integration, drag-and-drop reordering, color-coded categories, and dark/light theme support.
 
