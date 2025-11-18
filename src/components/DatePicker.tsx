@@ -57,7 +57,13 @@ export function DatePicker({ value, onChange, taskId }: DatePickerProps) {
     setIsOpen(false);
   };
 
-  const isOverdue = selectedDate && selectedDate < new Date() && !selectedDate.toDateString().includes(new Date().toDateString());
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dueDate = selectedDate ? new Date(selectedDate) : null;
+  if (dueDate) {
+    dueDate.setHours(0, 0, 0, 0);
+  }
+  const isOverdue = dueDate && dueDate < today;
 
   return (
     <div className="relative">
