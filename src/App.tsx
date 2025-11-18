@@ -1,9 +1,18 @@
 import { useTasks } from './hooks/useTasks';
+import { useTaskFilter } from './hooks/useTaskFilter';
 import { TaskList } from './components/TaskList';
 import { AddTaskForm } from './components/AddTaskForm';
+import { FilterBar } from './components/FilterBar';
 
 function App() {
   const { tasks, loading, error, addTask, updateTask, deleteTask, toggleTask } = useTasks();
+  const {
+    filteredTasks,
+    filterStatus,
+    setFilterStatus,
+    searchQuery,
+    setSearchQuery,
+  } = useTaskFilter(tasks);
 
   const handleAddTask = async (todo: string) => {
     await addTask({ todo, completed: false, userId: 1 });
@@ -20,8 +29,14 @@ function App() {
           Personal Task Manager
         </h1>
         <AddTaskForm onAdd={handleAddTask} loading={loading} />
+        <FilterBar
+          filterStatus={filterStatus}
+          onFilterChange={setFilterStatus}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
         <TaskList
-          tasks={tasks}
+          tasks={filteredTasks}
           loading={loading}
           error={error}
           onToggle={toggleTask}
