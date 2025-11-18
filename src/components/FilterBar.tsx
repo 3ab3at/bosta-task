@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { FilterStatus } from '../types/filter';
 
 interface FilterBarProps {
@@ -15,6 +16,16 @@ export function FilterBar({
   onSearchChange,
   searchInputRef,
 }: FilterBarProps) {
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    const checkMac = () => {
+      const platform = navigator.platform.toUpperCase();
+      const userAgent = navigator.userAgent.toUpperCase();
+      return platform.indexOf('MAC') >= 0 || userAgent.indexOf('MAC') >= 0;
+    };
+    setIsMac(checkMac());
+  }, []);
   return (
     <div className="mb-6 space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
@@ -24,7 +35,7 @@ export function FilterBar({
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search tasks... (Press / or Ctrl+K)"
+            placeholder={`Search tasks... (Press / or ${isMac ? '⌘' : 'Ctrl'}+K)`}
             aria-label="Search tasks"
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-white"
           />

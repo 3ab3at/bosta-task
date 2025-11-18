@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 
 interface AddTaskFormProps {
   onAdd: (todo: string) => Promise<void>;
@@ -9,6 +9,16 @@ interface AddTaskFormProps {
 export function AddTaskForm({ onAdd, loading = false, inputRef }: AddTaskFormProps) {
   const [input, setInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    const checkMac = () => {
+      const platform = navigator.platform.toUpperCase();
+      const userAgent = navigator.userAgent.toUpperCase();
+      return platform.indexOf('MAC') >= 0 || userAgent.indexOf('MAC') >= 0;
+    };
+    setIsMac(checkMac());
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -33,7 +43,7 @@ export function AddTaskForm({ onAdd, loading = false, inputRef }: AddTaskFormPro
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Add a new task... (Press Cmd+Shift+A)"
+          placeholder={`Add a new task... (Press ${isMac ? '⌘' : 'Ctrl'}+Shift+A)`}
           disabled={isSubmitting || loading}
           aria-label="Task input"
           aria-describedby="task-input-help"

@@ -1,18 +1,54 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function KeyboardShortcutsHelp() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMac, setIsMac] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Better Mac detection
+    // Better Mac detection - check multiple methods
     const checkMac = () => {
+      // Method 1: Check platform
       const platform = navigator.platform.toUpperCase();
+      if (platform.indexOf('MAC') >= 0) return true;
+      
+      // Method 2: Check user agent
       const userAgent = navigator.userAgent.toUpperCase();
-      return platform.indexOf('MAC') >= 0 || userAgent.indexOf('MAC') >= 0;
+      if (userAgent.indexOf('MAC') >= 0) return true;
+      
+      // Method 3: Check for Mac-specific properties
+      // @ts-ignore - navigator.maxTouchPoints might not be in types
+      if (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform)) {
+        return true;
+      }
+      
+      // Method 4: Check if meta key is the primary modifier (Mac behavior)
+      // This is a fallback - we'll use platform/userAgent primarily
+      return false;
     };
     setIsMac(checkMac());
   }, []);
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
+  // Focus modal when opened for keyboard accessibility
+  useEffect(() => {
+    if (isOpen && modalRef.current) {
+      modalRef.current.focus();
+    }
+  }, [isOpen]);
 
   const modKey = isMac ? '⌘' : 'Ctrl';
 
@@ -41,12 +77,8 @@ export function KeyboardShortcutsHelp() {
             onClick={() => setIsOpen(false)}
           />
           <div
+            ref={modalRef}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setIsOpen(false);
-              }
-            }}
             tabIndex={-1}
           >
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full">
