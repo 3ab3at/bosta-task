@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import type { Task } from '../types/task';
 import type { Category } from '../types/category';
 import { CategorySelector } from './CategorySelector';
