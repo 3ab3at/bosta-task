@@ -33,7 +33,7 @@ export function AddTaskForm({ onAdd, loading = false, inputRef }: AddTaskFormPro
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Add a new task... (Press Alt+N)"
+          placeholder="Add a new task... (Press Cmd+Shift+A)"
           disabled={isSubmitting || loading}
           aria-label="Task input"
           aria-describedby="task-input-help"
