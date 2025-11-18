@@ -63,8 +63,10 @@ export function useTasks() {
   };
 
   const reorderTasks = (startIndex: number, endIndex: number) => {
+    // Use functional update for immediate state change
     setTasks((prev) => {
-      const result = Array.from(prev);
+      if (startIndex === endIndex) return prev;
+      const result = [...prev];
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
       return result;

@@ -96,10 +96,8 @@ export function TaskList({
       return;
     }
 
-    // Use requestAnimationFrame to ensure smooth transition
-    requestAnimationFrame(() => {
-      onReorder(result.source.index, result.destination.index);
-    });
+    // Immediately update the order for instant feedback
+    onReorder(result.source.index, result.destination.index);
   };
 
   if (loading) {
@@ -163,7 +161,6 @@ export function TaskList({
                     style={{
                       ...provided.draggableProps.style,
                       userSelect: 'none',
-                      transition: snapshot.isDragging ? 'none' : 'transform 0.2s ease',
                     }}
                     className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex items-center gap-3 group ${
                       snapshot.isDragging
